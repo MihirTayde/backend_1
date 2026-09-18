@@ -4,11 +4,16 @@ const jwt = require("jsonwebtoken");
 
 const signup = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
+    const { userName, email, password, role } = req.body;
 
-    if (!userName || !email || !password) {
+    if (!userName || !email || !password || !role) {
       return res.status(400).json({
         message: "All fields are required",
+      });
+    }
+    if (role !== "admin" && role !== "worker") {
+      return res.status(400).json({
+        message: "Role must be either 'admin' or 'worker'",
       });
     }
 
@@ -36,7 +41,7 @@ const signup = async (req, res) => {
       userName: userName.trim(),
       email: normalizedEmail,
       password: passwordHash,
-      role: "user",
+      role: role,
     });
 
     return res.status(201).json({
@@ -54,11 +59,16 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !role) {
       return res.status(400).json({
-        message: "Email and password are required",
+        message: "Email, password, and role are required",
+      });
+    }
+    if (role !== "admin" && role !== "worker") {
+      return res.status(400).json({
+        message: "Role must be either 'admin' or 'worker'",
       });
     }
 
@@ -67,6 +77,7 @@ const login = async (req, res) => {
     const user = await User.findOne({
       where: {
         email: normalizedEmail,
+        role: role,
       },
     });
 

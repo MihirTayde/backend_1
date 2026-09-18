@@ -4,11 +4,11 @@ const { Model } = require("sequelize");
 const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Job extends Model {
     static associate(models) {
-      User.hasMany(models.Job, {
+      Job.belongsTo(models.User, {
         foreignKey: "createdBy",
-        as: "jobs",
+        as: "creator",
       });
     }
 
@@ -23,50 +23,51 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  User.init(
+  Job.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      role: {
+      jobTitle: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: "worker",
       },
-
-      userName: {
+      description: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
-
-      email: {
+      customerName: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-        set(value) {
-          this.setDataValue("email", value.toLowerCase().trim());
-        },
       },
-
-      password: {
+      customerContact: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      assignedWorker: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      priority: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      createdBy: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "User",
-      tableName: "Users",
+      modelName: "Job",
+      tableName: "Jobs",
     },
   );
 
-  return User;
+  return Job;
 };

@@ -4,11 +4,11 @@ const { Model } = require("sequelize");
 const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Part extends Model {
     static associate(models) {
-      User.hasMany(models.Job, {
+      Part.belongsTo(models.Job, {
         foreignKey: "createdBy",
-        as: "jobs",
+        as: "creator",
       });
     }
 
@@ -23,50 +23,40 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  User.init(
+  Part.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      role: {
+      partName: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: "worker",
       },
-
-      userName: {
+      unitPrice: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
+      },
+      quantity: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      totalPrice: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
 
-      email: {
+      createdBy: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-        set(value) {
-          this.setDataValue("email", value.toLowerCase().trim());
-        },
       },
-
-      password: {
+      updatedBy: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: "User",
-      tableName: "Users",
+      modelName: "Part",
+      tableName: "Parts",
     },
   );
 
-  return User;
+  return Part;
 };
